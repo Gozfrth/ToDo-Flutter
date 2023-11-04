@@ -21,11 +21,15 @@ class ViewTask extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.vertical(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: const Color(0xff272727),
+          width: 1,
+        ),
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(20),
         ),
-        color: Color(0xff272727),
+        color: const Color(0xff272727),
       ),
       child: Padding(
         padding: const EdgeInsets.only(

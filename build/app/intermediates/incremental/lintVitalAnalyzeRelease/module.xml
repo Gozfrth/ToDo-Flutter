@@ -1,11 +1,11 @@
 <lint-module
     format="1"
-    dir="C:\Users\abybi\OneDrive\Desktop\flu\todo\android\app"
+    dir="C:\Users\abybi\OneDrive\Desktop\flu\ToDo INT\android\app"
     name=":app"
     type="APP"
     maven="android:app:"
     gradle="7.3.0"
-    buildFolder="C:\Users\abybi\OneDrive\Desktop\flu\todo\build\app"
+    buildFolder="C:\Users\abybi\OneDrive\Desktop\flu\ToDo INT\build\app"
     bootClassPath="C:\Users\abybi\AppData\Local\Android\sdk\platforms\android-33\android.jar;C:\Users\abybi\AppData\Local\Android\sdk\build-tools\30.0.3\core-lambda-stubs.jar"
     javaSourceLevel="1.8"
     compileTarget="android-33">

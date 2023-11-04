@@ -63,7 +63,7 @@ class _ToDoTileState extends State<ToDoTile> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 25.0),
+      padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
       child: Slidable(
         endActionPane: ActionPane(
           motion: const StretchMotion(),
@@ -77,14 +77,14 @@ class _ToDoTileState extends State<ToDoTile> {
           ],
         ),
         child: Container(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(10.0),
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
                 color: widget.taskCompleted
                     ? const Color(0xffd1d1d1)
                     : widget.priorityColor,
-                blurRadius: 20,
+                blurRadius: 10,
               ),
             ],
             color: const Color(0xff272727),
@@ -93,12 +93,17 @@ class _ToDoTileState extends State<ToDoTile> {
               color: widget.taskCompleted
                   ? const Color(0xffd1d1d1)
                   : widget.priorityColor,
-              width: 4,
+              width: 2,
             ),
           ),
           child: Row(
             children: [
               Checkbox(
+                fillColor: MaterialStateProperty.resolveWith<Color>(
+                  (Set<MaterialState> states) {
+                    return const Color(0xffd1d1d1);
+                  },
+                ),
                 value: widget.taskCompleted,
                 onChanged: widget.onChanged,
                 activeColor: Colors.black,
@@ -116,7 +121,7 @@ class _ToDoTileState extends State<ToDoTile> {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                          fontSize: 16,
                           color: const Color(0xffd9d9d9),
                           decoration: widget.taskCompleted
                               ? TextDecoration.lineThrough
@@ -139,7 +144,7 @@ class _ToDoTileState extends State<ToDoTile> {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: const Color(0xffd1d1d1),
-                            fontSize: 12,
+                            fontSize: 10,
                             fontWeight: FontWeight.normal,
                             decoration: widget.taskCompleted
                                 ? TextDecoration.lineThrough
@@ -151,7 +156,7 @@ class _ToDoTileState extends State<ToDoTile> {
                 ),
               ),
               Transform.translate(
-                offset: const Offset(0, 20),
+                offset: const Offset(0, 15),
                 child: Text(
                   '${widget.taskTime.day}/${widget.taskTime.month}/${widget.taskTime.year}',
                   style: const TextStyle(

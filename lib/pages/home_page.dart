@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   ToDoDataBase db = ToDoDataBase();
   List filteredList = [];
   bool prioritySorted = false;
+  String selectedPriority = 'high';
 
   @override
   void initState() {
@@ -32,11 +33,22 @@ class _HomePageState extends State<HomePage> {
     }
     setState(() {
       filteredList = List.from(db.toDoList);
+
+      //sort date wise and such that completed tasks are always at the bottom
+      filteredList.sort((a, b) {
+        //val is arbitrary int
+        int val = 0;
+        if (a[1]) {
+          val = 1000;
+        }
+        return a[2].compareTo(b[2]) + val;
+      });
     });
 
     super.initState();
   }
 
+  //sets the priority based on what the user sets it to.
   void selectedPrioritySetter(String newValue) {
     setState(() {
       selectedPriority = newValue;
@@ -45,11 +57,15 @@ class _HomePageState extends State<HomePage> {
 
   void checkBoxChanged(bool? value, int index) {
     setState(() {
-      db.toDoList[index][1] = !db.toDoList[index][1];
+      int ind = db.toDoList.indexWhere((element) =>
+          element[0] == filteredList[index][0] &&
+          element[2] == filteredList[index][2]);
+      db.toDoList[ind][1] = !db.toDoList[ind][1];
     });
     db.updateDataBase();
   }
 
+  //All data related functions
   void saveNewTask() {
     DateTime now = DateTime.now();
     setState(() {
@@ -108,7 +124,14 @@ class _HomePageState extends State<HomePage> {
 
   void dateSort() {
     setState(() {
-      filteredList.sort((a, b) => a[2].compareTo(b[2]));
+      filteredList = List.from(db.toDoList);
+      filteredList.sort((a, b) {
+        int val = 0;
+        if (a[1]) {
+          val = 10000;
+        }
+        return a[2].compareTo(b[2]) + val;
+      });
     });
   }
 
@@ -121,18 +144,29 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void onSearch(String searchTerm) {}
+  void onSearch(String searchTerm) {
+    setState(() {
+      filteredList = db.toDoList
+          .where((element) =>
+              element[0].toLowerCase().contains(searchTerm.toLowerCase()) ||
+              element[3].toLowerCase().contains(searchTerm.toLowerCase()))
+          .toList();
+    });
+  }
 
   void onSort() {
     if (prioritySorted == false) {
+      //sorts based on priority
       prioritySort();
       prioritySorted = true;
     } else {
+      //sorts based on date
       dateSort();
       prioritySorted = false;
     }
   }
 
+  //ACTUAL HOMEPAGE WIDGET
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -162,7 +196,7 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: db.toDoList.length,
+              itemCount: filteredList.length,
               itemBuilder: (context, index) {
                 return ToDoTile(
                   taskName: filteredList[index][0],

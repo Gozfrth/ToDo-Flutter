@@ -31,11 +31,15 @@ class _DialogBoxState extends State<DialogBox> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.vertical(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: const Color(0xff272727),
+              width: 1,
+            ),
+            borderRadius: const BorderRadius.vertical(
               top: Radius.circular(20),
             ),
-            color: Color(0xff272727),
+            color: const Color(0xff272727),
           ),
           padding: const EdgeInsets.all(25), // Set the background color
           child: Column(
