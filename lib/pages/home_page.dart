@@ -37,8 +37,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  String selectedPriority = 'high';
-
   void selectedPrioritySetter(String newValue) {
     setState(() {
       selectedPriority = newValue;
