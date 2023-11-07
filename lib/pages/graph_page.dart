@@ -60,7 +60,6 @@ class _GraphPageState extends State<GraphPage> {
       }
     }
 
-    print('$lowData');
     super.initState();
   }
 

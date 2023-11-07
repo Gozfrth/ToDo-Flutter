@@ -4,12 +4,14 @@ class SearchSort extends StatelessWidget {
   final TextEditingController searchController;
   dynamic Function(String) onSearch;
   dynamic onSort;
+  String sortType;
 
   SearchSort({
     super.key,
     required this.searchController,
     required this.onSearch,
     required this.onSort,
+    required this.sortType,
   });
 
   @override
@@ -48,9 +50,14 @@ class SearchSort extends StatelessWidget {
           ),
           GestureDetector(
             onTap: onSort,
-            child: const Icon(
-              Icons.sort,
-              color: Color(0xffd9d9d9),
+            child: Column(
+              children: [
+                const Icon(
+                  Icons.sort,
+                  color: Color(0xffd9d9d9),
+                ),
+                Text(sortType),
+              ],
             ),
           ),
         ],

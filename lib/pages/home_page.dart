@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
@@ -15,10 +17,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Random random = Random();
   final _myBox = Hive.box('mybox');
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _searchController = TextEditingController();
+  String sortType = "Date";
 
 //new
   bool islight = false; // Track the current theme
@@ -43,14 +47,7 @@ class _HomePageState extends State<HomePage> {
       filteredList = List.from(db.toDoList);
 
       //sort date wise and such that completed tasks are always at the bottom
-      filteredList.sort((a, b) {
-        //val is arbitrary int
-        int val = 0;
-        if (a[1]) {
-          val = 1000;
-        }
-        return a[2].compareTo(b[2]) + val;
-      });
+      dateSort();
     });
 
     super.initState();
@@ -70,13 +67,16 @@ class _HomePageState extends State<HomePage> {
           element[2] == filteredList[index][2]);
       db.toDoList[ind][1] = !db.toDoList[ind][1];
       if (db.toDoList[ind][1]) {
-        db.toDoList[ind][5] = DateTime.now();
+        DateTime now = DateTime.now();
+        int subDays = random.nextInt(7);
+        db.toDoList[ind][5] = now.subtract(Duration(days: subDays));
       } else {
         db.toDoList[ind][5] = null;
       }
     });
     db.updateDataBase();
     filteredList = List.from(db.toDoList);
+    dateSort();
   }
 
   //All data related functions
@@ -97,6 +97,7 @@ class _HomePageState extends State<HomePage> {
     Navigator.of(context).pop();
     db.updateDataBase();
     filteredList = List.from(db.toDoList);
+    dateSort();
   }
 
   void createNewTask() {
@@ -141,22 +142,65 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       filteredList = List.from(db.toDoList);
       filteredList.sort((a, b) {
-        int val = 0;
-        if (a[1]) {
-          val = 10000;
+        if (a[1] && !b[1]) {
+          return 1; // Move a to the end if a[1] is true and b[1] is false
+        } else if (!a[1] && b[1]) {
+          return -1; // Move b to the end if b[1] is true and a[1] is false
+        } else {
+          return DateTime.parse(a[2].toString())
+              .difference(DateTime.parse(b[2].toString()))
+              .inMinutes;
         }
-        return a[2].compareTo(b[2]) + val;
       });
     });
   }
 
   void prioritySort() {
     setState(() {
-      filteredList =
-          filteredList.where((element) => element[4] == "high").toList() +
-              filteredList.where((element) => element[4] == "medium").toList() +
-              filteredList.where((element) => element[4] == "low").toList();
+      List<List<dynamic>> trueList = [];
+      List<List<dynamic>> falseList = [];
+
+      for (var element in filteredList) {
+        if (element[1]) {
+          trueList.add(element);
+        } else {
+          falseList.add(element);
+        }
+      }
+
+      trueList.sort((a, b) {
+        return DateTime.parse(a[2].toString())
+            .difference(DateTime.parse(b[2].toString()))
+            .inMinutes;
+      });
+
+      falseList.sort((a, b) {
+        int priorityComparison = _comparePriority(a[4], b[4]);
+        if (priorityComparison != 0) {
+          return priorityComparison;
+        } else {
+          return DateTime.parse(a[2].toString())
+              .difference(DateTime.parse(b[2].toString()))
+              .inMinutes;
+        }
+      });
+
+      filteredList = falseList + trueList;
     });
+  }
+
+  int _comparePriority(String priorityA, String priorityB) {
+    if (priorityA == "high") {
+      return -1; // high priority should come first
+    } else if (priorityA == "medium" && priorityB == "high") {
+      return 1; // medium priority should come after high priority
+    } else if (priorityA == "medium" && priorityB == "low") {
+      return -1; // medium priority should come before low priority
+    } else if (priorityA == "low") {
+      return 1; // low priority should come last
+    } else {
+      return 0; // priorities are the same
+    }
   }
 
   void onSearch(String searchTerm) {
@@ -174,10 +218,12 @@ class _HomePageState extends State<HomePage> {
       //sorts based on priority
       prioritySort();
       prioritySorted = true;
+      sortType = "Priority";
     } else {
       //sorts based on date
       dateSort();
       prioritySorted = false;
+      sortType = "Date";
     }
   }
 
@@ -229,6 +275,9 @@ class _HomePageState extends State<HomePage> {
           elevation: 0,
         ),
         floatingActionButton: FloatingActionButton(
+          shape: CircleBorder(
+            side: BorderSide(color: Color(0xffd9d9d9), width: 2.0),
+          ),
           foregroundColor: const Color(0xffd9d9d9),
           backgroundColor: const Color(0xff272727),
           onPressed: createNewTask,
@@ -240,6 +289,7 @@ class _HomePageState extends State<HomePage> {
               onSearch: onSearch,
               searchController: _searchController,
               onSort: onSort,
+              sortType: sortType,
             ),
             Expanded(
               child: ListView.builder(
@@ -253,7 +303,7 @@ class _HomePageState extends State<HomePage> {
                     deleteFunction: (context) => deleteTask(index),
                     description: filteredList[index][3],
                     priority: filteredList[index][4],
-                    dateCompleted: filteredList[index][4],
+                    dateCompleted: filteredList[index][5],
                   );
                 },
               ),
