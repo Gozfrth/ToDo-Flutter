@@ -12,6 +12,7 @@ class ToDoTile extends StatefulWidget {
   Function(bool?)? onChanged;
   Function(BuildContext) deleteFunction;
   final Color priorityColor;
+  final dateCompleted;
 
   ToDoTile({
     super.key,
@@ -22,6 +23,7 @@ class ToDoTile extends StatefulWidget {
     required this.deleteFunction,
     required this.description,
     required this.priority,
+    required this.dateCompleted,
   }) : priorityColor = (priority == 'high')
             ? const Color(0xffdd7777)
             : (priority == 'medium')
@@ -63,7 +65,7 @@ class _ToDoTileState extends State<ToDoTile> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
+      padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 5.0),
       child: Slidable(
         endActionPane: ActionPane(
           motion: const StretchMotion(),
@@ -79,14 +81,6 @@ class _ToDoTileState extends State<ToDoTile> {
         child: Container(
           padding: const EdgeInsets.all(10.0),
           decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: widget.taskCompleted
-                    ? const Color(0xffd1d1d1)
-                    : widget.priorityColor,
-                blurRadius: 10,
-              ),
-            ],
             color: const Color(0xff272727),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
@@ -104,6 +98,7 @@ class _ToDoTileState extends State<ToDoTile> {
                     return const Color(0xffd1d1d1);
                   },
                 ),
+                checkColor: const Color(0xff272727),
                 value: widget.taskCompleted,
                 onChanged: widget.onChanged,
                 activeColor: Colors.black,
@@ -126,6 +121,7 @@ class _ToDoTileState extends State<ToDoTile> {
                           decoration: widget.taskCompleted
                               ? TextDecoration.lineThrough
                               : TextDecoration.none,
+                          decorationThickness: 3,
                         ),
                       ),
                       if (widget.description.isNotEmpty)
@@ -134,7 +130,10 @@ class _ToDoTileState extends State<ToDoTile> {
                         ),
                       if (widget.description.isNotEmpty)
                         Container(
-                          color: const Color(0xffd1d1d1),
+                          margin: const EdgeInsets.only(right: 10),
+                          color: widget.taskCompleted
+                              ? const Color(0xffd9d9d9)
+                              : widget.priorityColor,
                           height: 2,
                         ),
                       if (widget.description.isNotEmpty)
@@ -149,6 +148,7 @@ class _ToDoTileState extends State<ToDoTile> {
                             decoration: widget.taskCompleted
                                 ? TextDecoration.lineThrough
                                 : TextDecoration.none,
+                            decorationThickness: 3,
                           ),
                         ),
                     ],
