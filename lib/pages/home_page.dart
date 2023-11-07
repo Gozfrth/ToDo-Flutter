@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import 'package:todo/data/database.dart';
+import 'package:todo/pages/graph_page.dart';
 import 'package:todo/util/dialog_box.dart';
 import 'package:todo/util/search_bar.dart';
 import 'package:todo/util/todo_tile.dart';
@@ -68,8 +69,14 @@ class _HomePageState extends State<HomePage> {
           element[0] == filteredList[index][0] &&
           element[2] == filteredList[index][2]);
       db.toDoList[ind][1] = !db.toDoList[ind][1];
+      if (db.toDoList[ind][1]) {
+        db.toDoList[ind][5] = DateTime.now();
+      } else {
+        db.toDoList[ind][5] = null;
+      }
     });
     db.updateDataBase();
+    filteredList = List.from(db.toDoList);
   }
 
   //All data related functions
@@ -82,6 +89,7 @@ class _HomePageState extends State<HomePage> {
         now,
         _descriptionController.text,
         selectedPriority,
+        null,
       ]);
       _titleController.clear();
       _descriptionController.clear();
@@ -197,11 +205,26 @@ class _HomePageState extends State<HomePage> {
             )
           ],
           //backgroundColor: const Color(0xff353535),
-          title: const Center(
-            child: Text(
-              "TO DO",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          GraphPage(filteredList: filteredList),
+                    ),
+                  );
+                },
+                child: Icon(Icons.graphic_eq),
+              ),
+              Text(
+                "TO DO",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
           elevation: 0,
         ),
@@ -230,6 +253,7 @@ class _HomePageState extends State<HomePage> {
                     deleteFunction: (context) => deleteTask(index),
                     description: filteredList[index][3],
                     priority: filteredList[index][4],
+                    dateCompleted: filteredList[index][4],
                   );
                 },
               ),

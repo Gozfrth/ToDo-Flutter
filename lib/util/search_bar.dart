@@ -15,7 +15,7 @@ class SearchSort extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 15, left: 15, right: 15),
+      margin: const EdgeInsets.only(top: 25, left: 15, right: 15, bottom: 15),
       padding: const EdgeInsets.only(
         left: 10,
         right: 10,

@@ -3,6 +3,7 @@ import 'dart:js';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:todo/pages/graph_page.dart';
 import 'package:todo/pages/home_page.dart';
 
 // import 'themes/theme.dart';
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomePage(),
     );
