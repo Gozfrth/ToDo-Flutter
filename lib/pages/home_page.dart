@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+
 import 'package:todo/data/database.dart';
 import 'package:todo/util/dialog_box.dart';
 import 'package:todo/util/search_bar.dart';
@@ -17,6 +18,12 @@ class _HomePageState extends State<HomePage> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _searchController = TextEditingController();
+
+//new
+  bool islight = false; // Track the current theme
+
+  ThemeData lightTheme = ThemeData.light(); // Define your light theme
+  ThemeData darkTheme = ThemeData.dark(); // Define your dark theme
 
   ToDoDataBase db = ToDoDataBase();
   List filteredList = [];
@@ -169,48 +176,66 @@ class _HomePageState extends State<HomePage> {
   //ACTUAL HOMEPAGE WIDGET
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xff272727),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff353535),
-        title: const Center(
-          child: Text(
-            "TO DO",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        elevation: 0,
-      ),
-      floatingActionButton: FloatingActionButton(
-        foregroundColor: const Color(0xffd9d9d9),
-        backgroundColor: const Color(0xff272727),
-        onPressed: createNewTask,
-        child: const Icon(Icons.add),
-      ),
-      body: Column(
-        children: [
-          SearchSort(
-            onSearch: onSearch,
-            searchController: _searchController,
-            onSort: onSort,
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredList.length,
-              itemBuilder: (context, index) {
-                return ToDoTile(
-                  taskName: filteredList[index][0],
-                  taskCompleted: filteredList[index][1],
-                  taskTime: filteredList[index][2],
-                  onChanged: (value) => checkBoxChanged(value, index),
-                  deleteFunction: (context) => deleteTask(index),
-                  description: filteredList[index][3],
-                  priority: filteredList[index][4],
-                );
+    // =set the theme based in the islight cariable
+
+    final theme = islight ? lightTheme : darkTheme;
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: theme, //Apply the selected theme
+      home: Scaffold(
+        //backgroundColor: const Color(0xff272727),
+        appBar: AppBar(
+          actions: <Widget>[
+            Switch(
+              value: islight,
+              onChanged: (value) {
+                //handle theme toggle
+                setState(() {
+                  islight = value;
+                });
               },
+            )
+          ],
+          //backgroundColor: const Color(0xff353535),
+          title: const Center(
+            child: Text(
+              "TO DO",
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-        ],
+          elevation: 0,
+        ),
+        floatingActionButton: FloatingActionButton(
+          foregroundColor: const Color(0xffd9d9d9),
+          backgroundColor: const Color(0xff272727),
+          onPressed: createNewTask,
+          child: const Icon(Icons.add),
+        ),
+        body: Column(
+          children: [
+            SearchSort(
+              onSearch: onSearch,
+              searchController: _searchController,
+              onSort: onSort,
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: filteredList.length,
+                itemBuilder: (context, index) {
+                  return ToDoTile(
+                    taskName: filteredList[index][0],
+                    taskCompleted: filteredList[index][1],
+                    taskTime: filteredList[index][2],
+                    onChanged: (value) => checkBoxChanged(value, index),
+                    deleteFunction: (context) => deleteTask(index),
+                    description: filteredList[index][3],
+                    priority: filteredList[index][4],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
